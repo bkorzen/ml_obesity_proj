@@ -8,6 +8,13 @@ Created on Thu Sep 17 23:19:58 2020
 import pandas as pd 
 import matplotlib.pyplot as plt 
 import numpy as np 
+from sklearn.model_selection import train_test_split
+import statsmodels.api as sm
+from sklearn.linear_model import LinearRegression, Lasso
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import mean_absolute_error
 
 df = pd.read_csv('obesity_cleaned.csv')
 df.columns
@@ -23,23 +30,17 @@ df_dummy = pd.get_dummies(df_model)
 df_dummy.columns
 
 # train test split
-from sklearn.model_selection import train_test_split
-
 X = df_dummy.drop('bmi', axis=1)
 y = df_dummy['bmi'].values
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # multiple linear regression
-import statsmodels.api as sm
-
 X_sm = sm.add_constant(X)
 model = sm.OLS(y, X_sm)
 model.fit().summary()
 
-from sklearn.linear_model import LinearRegression, Lasso
-from sklearn.model_selection import cross_val_score
-
+# linear regression
 lm = LinearRegression()
 lm.fit(X_train, y_train)
 
@@ -66,19 +67,33 @@ df_err = pd.DataFrame(err, columns = ['alpha','errors'])
 df_err[df_err.errors == max(df_err.errors)]
 
 # random forest
-from sklearn.ensemble import RandomForestRegressor
-
 rf = RandomForestRegressor()
 rf.fit(X_train, y_train)
 np.mean(cross_val_score(rf, X_train, y_train, scoring = 'neg_mean_absolute_error', cv=5))
 
 # GridsearchCV
-from sklearn.model_selection import GridSearchCV
-
-params = {'n_estimators':range(10,200,10), 'max_features':('auto','sqrt','log2')}
+params = {'n_estimators':range(10,200,10), 'criterion':('mse','mae'), 'max_features':('auto','sqrt','log2')}
 gs = GridSearchCV(estimator=rf, param_grid=params, scoring='neg_mean_absolute_error',cv=5)
 gs.fit(X_train,y_train)
 
 gs.best_score_
 gs.best_estimator_
+
+# test models
+tpred_lm = lm.predict(X_test)
+tpred_lm_lasso = lm_lasso.predict(X_test)
+tpred_rf = gs.best_estimator_.predict(X_test)
+
+mean_absolute_error(y_test, tpred_lm)
+mean_absolute_error(y_test, tpred_lm_lasso)   
+mean_absolute_error(y_test, tpred_rf)
+
+
+
+
+
+
+
+
+
 
