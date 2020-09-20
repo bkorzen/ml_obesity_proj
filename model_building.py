@@ -88,12 +88,7 @@ mean_absolute_error(y_test, tpred_lm)
 mean_absolute_error(y_test, tpred_lm_lasso)   
 mean_absolute_error(y_test, tpred_rf)
 
-
-
-
-
-
-
-
-
-
+import pickle
+model_pickle = {'model':gs.best_estimator_}
+file_name = "FlaskAPI\models\model_file.p"
+pickle.dump(model_pickle, open(file_name, "wb"))
