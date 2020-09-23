@@ -16,13 +16,11 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_absolute_error
 
-df = pd.read_csv('obesity_cleaned.csv')
+df = pd.read_csv('obesity_cleaned_improved.csv')
 df.columns
 
 # choose relevant columns
-df_model = df[['Gender', 'CAEC', 'TUE', 'CALC', 'MTRANS', 'family_history_with_overweight_binary',
-               'FAVC_binary', 'SMOKE_binary', 'SCC_binary', 'age_int', 'FCVC_cat', 'NCP_cat', 'CH2O_cat',
-               'FAF_cat', 'TUE_cat', 'bmi']]
+df_model = df.drop(columns=['height_rounded', 'weight_rounded'])
 
 
 # get dummy data
